@@ -1,0 +1,43 @@
+.friends_list{
+height: calc( 100vh - 10rem)
+}
+
+.friends_list::-webkit-scrollbar{
+    background: none
+}
+.friends_list::-webkit-scrollbar-thumb{
+    background-color: rgb(80, 79, 79);
+    border-radius: 30rem;
+
+
+}
+
+.friends_list::-webkit-scrollbar-corner{
+    display: none;
+
+}
+.chat_area{
+   height: calc(100vh - 8rem);
+   
+}
+
+
+
+@media (min-width: 1024px) {
+    
+    
+}
+
+.main {
+    width: calc(100% - 15rem) ;
+    /* background-color: aquamarine; */
+    margin-left: 15rem
+}
+.collapse{
+    width: 100%;
+    margin-left: 0
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
