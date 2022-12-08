@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setUser } from '../store/userSlice';
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { db, auth } from '../firebase.config';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const Main = () => {
@@ -39,52 +39,25 @@ dispatch(setUser(doc.data()))
 
     const getmessage = async()=>{
     const allmsg = collection(db, "message");
-    const q = query(allmsg, where("sender", "==", user.name));
+    const q = query(allmsg, orderBy("time"));
   
       const querySnapshot = await getDocs(q);
      
       const msgs = []
     querySnapshot.forEach((doc) => {
-      if (doc.data().sender === user.name && doc.data().receiver === currentFriend) {
-       
+      // if (doc.data().sender === user.name && doc.data().receiver === currentFriend) {
         msgs.push(doc.data());
-     }
- 
-    
-   
-   
+      // }
   }, [])
   setsenderMsg(msgs)
-     
-      
-      
     };
-    getmessage()
-  })
+    setInterval(() => {
+      getmessage()
+    }, 500)
+  },[])
   
 
-  useEffect(() => {
-    const getmsg2 = async() => {
-      const allmsg = collection(db, "message");
-      const qs = query(allmsg, where("receiver", "==", user.name));
-      const querySnapshot2 = await getDocs(qs);
 
-      const msgs2 = []
-
-querySnapshot2.forEach((doc) => {
-  if (doc.data().receiver === user.name && doc.data().sender === currentFriend) {
-    console.log(doc.data())
-    msgs2.push(doc.data())
-        }
-        
-        
-      }, [])
-      setrecieverMsg(msgs2)
-    }
-    getmsg2() 
-  })
-
-console.log(recievermsg)
   const handleSendMsg = async(event)=>{
     try {
       event.preventDefault()
@@ -93,7 +66,8 @@ console.log(recievermsg)
          const docRef = await addDoc(collection(db, "message"), {
            sender: user.name,
            receiver: currentFriend,
-           msg: msgRef.current.value
+           msg: msgRef.current.value,
+           time:Timestamp.fromDate(new Date())
          });
   msgRef.current.value= ""
 
@@ -117,12 +91,21 @@ console.log(recievermsg)
           {
             sendermsg.map((msg) => {
               
-              if (msg.sender === user.name) {
+              if (msg.sender === user.name && msg.receiver === currentFriend ) {
                 return (
                   <div className="flex mb-3">
                     <p className="text-white bg-rose-900 max-w-[20rem] rounded-br-2xl rounded-bl-2xl p-2 rounded-tr-2xl">
               {  msg.msg}
                     </p>
+                  </div>
+                );
+              }else if (msg.receiver === user.name && msg.sender === currentFriend) {
+                return (
+                  <div className="flex my-3 ">
+                    {" "}
+                    <p className="text-rose-900 bg-white max-w-[20rem] rounded-tl-2xl rounded-bl-2xl p-2 rounded-tr-2xl ml-auto ">
+                      {msg.msg}{" "}
+                    </p>{" "}
                   </div>
                 );
               } 
@@ -132,15 +115,7 @@ console.log(recievermsg)
           }
          
           {
-            recievermsg.map((msgs2) => {
-              return (
-                      <div className="flex my-3 ">
-                    <p className="text-rose-900 bg-white max-w-[20rem] rounded-tl-2xl rounded-bl-2xl p-2 rounded-tr-2xl ml-auto ">
-                 {msgs2.msg}
-                    </p>
-                  </div>
-              )
-            })
+            
 }
         
 

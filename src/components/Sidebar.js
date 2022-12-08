@@ -60,24 +60,24 @@ const querySnapshot = await getDocs(q);
     // console.log(name)
   }
 
+  const getData = async () => {
+    try {
+      if (Object.keys(user).length > 0) {
+     
+        const unsub = onSnapshot(doc(db, "friends", user.email), (doc) => {
+          // console.log("Current data: ", doc.data().friends);
+          setFriends(doc.data().friends)
+          });
+      }
+
+
+    } catch (err) {
+      console.log(err)
+    }
+    
+  }
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        if (Object.keys(user).length > 0) {
-       
-          const unsub = onSnapshot(doc(db, "friends", user.email), (doc) => {
-            // console.log("Current data: ", doc.data().friends);
-            setFriends(doc.data().friends)
-            });
-        }
-
-
-      } catch (err) {
-        console.log(err)
-      }
-      
-    }
 
     getData()
 
@@ -91,6 +91,8 @@ const newFriendRef = doc(db, "friends", user.email);
       await updateDoc(newFriendRef, {
         friends: arrayUnion(friendRef.current.value),
       });
+      setDisplay(false)
+      getData()
      
     } catch (error) {
       
