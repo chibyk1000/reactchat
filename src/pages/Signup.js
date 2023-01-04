@@ -84,7 +84,7 @@ const [loading, setLoading] = useState(false)
     }
   };
   return (
-    <form className=" w-7/12 mx-auto pt-10 " onSubmit={handleSignup}>
+    <form className=" w-11/12 md:w-7/12 mx-auto pt-10 " onSubmit={handleSignup}>
       <Box component="section" className=" bg-white p-4">
         <p className="text-chat font-bold uppercase text-3xl">
           Create an account
